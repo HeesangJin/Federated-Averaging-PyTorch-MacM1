@@ -19,7 +19,7 @@ class Client(object):
     Attributes:
         id: Integer indicating client's id.
         data: torch.utils.data.Dataset instance containing local data.
-        device: Training machine indicator (e.g. "cpu", "cuda").
+        device: Training machine indicator (e.g. "cpu", "cuda", "mps").
         __model: torch.nn instance as a local model.
     """
     def __init__(self, client_id, local_data, device):
@@ -68,7 +68,7 @@ class Client(object):
                 loss.backward()
                 optimizer.step() 
 
-                if self.device == "cuda": torch.cuda.empty_cache()               
+                if self.device == "mps": torch.mps.empty_cache()
         self.model.to("cpu")
 
     def client_evaluate(self):
@@ -86,7 +86,7 @@ class Client(object):
                 predicted = outputs.argmax(dim=1, keepdim=True)
                 correct += predicted.eq(labels.view_as(predicted)).sum().item()
 
-                if self.device == "cuda": torch.cuda.empty_cache()
+                if self.device == "mps": torch.mps.empty_cache()
         self.model.to("cpu")
 
         test_loss = test_loss / len(self.dataloader)

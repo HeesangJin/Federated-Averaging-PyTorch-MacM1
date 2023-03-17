@@ -32,7 +32,7 @@ class Server(object):
         writer: SummaryWriter instance to track a metric and a loss of the global model.
         model: torch.nn instance for a global model.
         seed: Int for random seed.
-        device: Training machine indicator (e.g. "cpu", "cuda").
+        device: Training machine indicator (e.g. "cpu", "cuda", "mps").
         mp_flag: Boolean indicator of the usage of multiprocessing for "client_update" and "client_evaluate" methods.
         data_path: Path to read data.
         dataset_name: Name of the dataset.
@@ -284,7 +284,7 @@ class Server(object):
                 predicted = outputs.argmax(dim=1, keepdim=True)
                 correct += predicted.eq(labels.view_as(predicted)).sum().item()
                 
-                if self.device == "cuda": torch.cuda.empty_cache()
+                if self.device == "mps": torch.mps.empty_cache()
         self.model.to("cpu")
 
         test_loss = test_loss / len(self.dataloader)
